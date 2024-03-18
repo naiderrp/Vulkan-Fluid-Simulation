@@ -1,0 +1,65 @@
+#version 450
+
+layout (local_size_x = 128) in;
+
+layout(binding = 0) buffer in_positions {
+    vec2 position[];
+};
+
+layout(binding = 1) buffer in_velocities {
+    vec2 velocity[];
+};
+
+layout(binding = 2) buffer in_forces {
+    vec2 force[];
+};
+
+layout(binding = 3) buffer in_densities {
+    float density[];
+};
+
+layout(binding = 4) buffer in_pressures {
+    float pressure[];
+};
+
+void main() {
+    uint i = gl_GlobalInvocationID.x;  
+
+    if (i > position.length()) return;
+
+    const float pi = 3.1415927410125732421875f;
+    const float radius = 0.005f;
+    const float resting_density = 1000.0f;
+    const float m = 0.02;
+    const float h = 4 * radius;
+
+    const float viscosity = 3000.f;
+    const vec2 gravity = vec2(0.0, 9806.65);
+
+    const int num = position.length();
+
+    vec2 pressure_force = vec2(0.0, 0.0);
+    vec2 viscosity_force = vec2(0.0, 0.0);
+    
+    for (int j = 0; j < num; ++j) {
+        if (i == j) continue;
+
+        vec2 delta = position[i] - position[j];
+        
+        float r = length(delta);
+        
+        if (r < h) {
+            pressure_force -= m * (pressure[i] + pressure[j]) / (2.f * density[j]) *
+            // gradient of spiky kernel
+                -45.f / (pi * pow(h, 6)) * pow(h - r, 2) * normalize(delta);
+            viscosity_force += m * (velocity[j] - velocity[i]) / density[j] *
+            // Laplacian of viscosity kernel
+                45.f / (pi * pow(h, 6)) * (h - r);
+        }
+    }
+
+    viscosity_force *= viscosity;
+    vec2 external_force = density[i] * gravity;
+
+    force[i] = pressure_force + viscosity_force + external_force;
+}

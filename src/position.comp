@@ -1,0 +1,58 @@
+#version 450
+
+layout (local_size_x = 128) in;
+
+layout(binding = 0) buffer in_positions {
+    vec2 position[];
+};
+
+layout(binding = 1) buffer in_velocities {
+    vec2 velocity[];
+};
+
+layout(binding = 2) buffer in_forces {
+    vec2 force[];
+};
+
+layout(binding = 3) buffer in_densities {
+    float density[];
+};
+
+layout(binding = 4) buffer in_pressures {
+    float pressure[];
+};
+
+bool in_bounds(float coord, float boundary) {
+    return (coord > -boundary) && (coord < boundary);   
+}
+
+void main() {
+    uint i = gl_GlobalInvocationID.x;
+
+    if (i > position.length()) return;
+
+    const float dt = 0.0001f;
+    const float collision_damping = 0.3f;
+
+    const int num = position.length();
+
+    vec2 acceleration = force[i] / density[i];
+    vec2 new_velocity = velocity[i] + dt * acceleration;
+    vec2 new_position = position[i] + dt * new_velocity;
+
+    const vec2 bounding_box = vec2(1.0, 1.0);
+
+    if (!in_bounds(new_position.x, bounding_box.x)) {
+        float sign = new_position.x / abs(new_position.x);
+        new_position.x = 1.0 * sign;
+        new_velocity.x *= -1 * collision_damping;
+    }
+    else if (!in_bounds(new_position.y, bounding_box.y)) {
+        float sign = new_position.y / abs(new_position.y);
+        new_position.y = 1.0 * sign;
+        new_velocity.y *= -1 * collision_damping;
+    }
+
+    velocity[i] = new_velocity;
+    position[i] = new_position;
+}
