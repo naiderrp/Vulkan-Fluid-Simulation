@@ -8,8 +8,10 @@ Vulkan Real-Time Grass Rendering
 ## Introduction
 
 The study of fluid simulation is known as Computational Fluid Dynamics, and the most well-known model for describing the behavior of fluids is given by the Navier-Stokes equations. These equations model a fluid by considering the physical quantities mass-density, pressure, velocity and can be solved using two common approaches: Lagrangian approach (particle-based) and Eulerian approach (grid-based). The project only covers the first one.
+
 The Lagrangian approach involves tracking individual fluid particles as they move about and determining how the fluid properties associated with these particles change as a function of time. The smoothed particle hydrodynamics (SPH) method is based on Lagrangian approach. It is smoothed because it blurs out the boundaries of a particle so that a smooth distribution of physical quantities is obtained. The smoothness in SPH is described using a kernel function.
-Keep in mind the implemented flow is steady. For the SPH implementation, I relied on papers listed in the Resources section.
+
+For the SPH implementation, I relied on papers listed in the Resources section.
 
 ## Environment
 
@@ -23,9 +25,10 @@ Since all the math intuition is described in related topics, a visualization I c
 
 ![](img/key_integral.jpg)
 
-## Speeding up
+## Boosting FPS
 
 The very first improvement is employing a flat data structure. A data structure is considered flat if its elements are stored together in a contiguous piece of storage. Flat data structures offer an advantage in cache locality, making them more efficient to traverse. The frame rate was less than 30 FPS before and almost 70 FPS after.
+
 Another useful trick is multithreaded rendering. Again, the performance gain is significant. This technique has boosted the FPS value from 70 to 190. I could potentially render twice as many particles if necessary. However, since 5000 vertices is enough to approximate the surface, I would prefer to spend the free computing time for integrating another simulation or adding collision detection.
  
 ## Resources
