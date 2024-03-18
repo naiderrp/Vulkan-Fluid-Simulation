@@ -25,7 +25,7 @@ Since all the math intuition is described in related topics, a visualization I c
 
 ![](img/key_integral.jpg)
 
-## Boosting FPS
+## Boosting Performance
 
 The very first improvement is employing a flat data structure. A data structure is considered flat if its elements are stored together in a contiguous piece of storage. Flat data structures offer an advantage in cache locality, making them more efficient to traverse. The frame rate was less than 30 FPS before and almost 70 FPS after.
 
