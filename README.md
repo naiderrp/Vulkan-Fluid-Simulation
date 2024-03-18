@@ -1,7 +1,7 @@
-Vulkan Real-Time Grass Rendering
+Vulkan Real-Time Fluid Simulation
 ======================
 
-## Demo rendering
+## Demo
 
 ![](img/fluid-demo.gif)
 
