@@ -1,7 +1,7 @@
 Vulkan Real-Time Fluid Simulation
 ======================
 
-## Demo
+## Demo: 5000 particles
 
 ![](img/fluid-demo.gif)
 
